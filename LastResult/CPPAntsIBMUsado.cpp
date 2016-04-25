@@ -24,7 +24,7 @@ int main (void){
     printf("hello\n");
     
     Pheromone fero(Teste);
-    cout << fero.PheromoneDensity.lines <<endl;
+    cout << fero.PheromoneDensity.dim1 <<endl;
     
     return 0;
 }

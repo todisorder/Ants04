@@ -1,26 +1,37 @@
 
-
-// Declarations
-class my_matrix;
-my_matrix Inverse(const my_matrix& a);
-double Det(const my_matrix& a);
-
+////////////////////////////////////////////////////////
+//  Class my_matrix
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 class my_matrix {
 public:
-    int dim1,dim2;
+    int lines,cols;
     double * elementos;
     
     
+    my_matrix (){}
     my_matrix (int m,int n)
     {
-        dim1=m;
-        dim2=n;
+        lines=m;
+        cols=n;
         elementos=new double[m*n];
-   	 for (int i=0; i< dim1 ; i++) {
-    	    for (int j=0; j<dim2; j++) {
-            	elementos[i*dim2+j] = 0.;
-    	    }
-    	}
+        for (int i=0; i< lines ; i++) {
+            for (int j=0; j<cols; j++) {
+                elementos[i*cols+j] = 0.;
+            }
+        }
+    }
+    my_matrix (Numerics& data)
+    {
+        lines=data.numxx;
+        cols=data.numyy;
+        elementos=new double[lines*cols];
+        for (int i=0; i< lines ; i++) {
+            for (int j=0; j<cols; j++) {
+                elementos[i*cols+j] = 3.;
+            }
+        }
     }
     //    ~my_matrix()
     //    {
@@ -29,31 +40,31 @@ public:
     
     
     double &operator() (int i,int j){
-        if(i>=dim1){
+        if(i>=lines){
             cout << "erro x" << endl;
             exit(1);}
-        if(j>=dim2){
+        if(j>=cols){
             cout << "erro y" << endl;
             exit(1);}
         
-        return elementos[i*dim2+j];
+        return elementos[i*cols+j];
     }
     
-
+    
     
     
     void print (){
         int i,j;
-        for(i=0;i<dim1;i++)
-            for(j=0;j<dim2;j++){
+        for(i=0;i<lines;i++)
+            for(j=0;j<cols;j++){
                 cout << operator()(i,j) << " ";
-                if(j==dim2-1)
+                if(j==cols-1)
                     cout << endl;
             }
     }
     
     
-   
+    
     
     
 };
@@ -61,165 +72,56 @@ public:
 // Ver http://condor.depaul.edu/ntomuro/courses/262/notes/lecture3.html
 my_matrix operator+(const my_matrix &M1, const my_matrix &M2)
 {
-    my_matrix soma (M1.dim1, M1.dim2);
-    for (int i=0; i< soma.dim1 ; i++) {
-        for (int j=0; j<soma.dim2; j++) {
-            soma.elementos[i*M1.dim2+j] = M1.elementos[i*M1.dim2+j] + M2.elementos[i*M1.dim2+j];
+    my_matrix soma (M1.lines, M1.cols);
+    for (int i=0; i< soma.lines ; i++) {
+        for (int j=0; j<soma.cols; j++) {
+            soma.elementos[i*M1.cols+j] = M1.elementos[i*M1.cols+j] + M2.elementos[i*M1.cols+j];
         }
     }
     return soma;
 }
 my_matrix operator-(const my_matrix &M1, const my_matrix &M2)
 {
-    my_matrix soma (M1.dim1, M1.dim2);
-    for (int i=0; i< soma.dim1 ; i++) {
-        for (int j=0; j<soma.dim2; j++) {
-            soma.elementos[i*M1.dim2+j] = M1.elementos[i*M1.dim2+j] - M2.elementos[i*M1.dim2+j];
+    my_matrix soma (M1.lines, M1.cols);
+    for (int i=0; i< soma.lines ; i++) {
+        for (int j=0; j<soma.cols; j++) {
+            soma.elementos[i*M1.cols+j] = M1.elementos[i*M1.cols+j] - M2.elementos[i*M1.cols+j];
         }
     }
     return soma;
 }
 my_matrix operator*(const my_matrix &M1, const double C)
 {
-    my_matrix prod (M1.dim1, M1.dim2);
+    my_matrix prod (M1.lines, M1.cols);
     prod = M1;
-
-    for (int i=0; i< prod.dim1 ; i++) {
-        for (int j=0; j<prod.dim2; j++) {		
-            prod.elementos[i*M1.dim2+j] *= C ;
+    
+    for (int i=0; i< prod.lines ; i++) {
+        for (int j=0; j<prod.cols; j++) {
+            prod.elementos[i*M1.cols+j] *= C ;
         }
     }
     return prod;
 }
 my_matrix operator*(const my_matrix &M1, const my_matrix &M2)
 {
-    my_matrix prod (M1.dim1, M1.dim2);
-	double aux = 0.;
-    for (int i=0; i< prod.dim1 ; i++) {
-        for (int j=0; j<prod.dim2; j++) {
-			for (int k=0; k<prod.dim2; k++) {
-				aux += M1.elementos[i*M1.dim2+k] * M2.elementos[k*M1.dim2+j];
-			}
-            prod.elementos[i*M1.dim2+j] = aux;
-			aux = 0.;
+    my_matrix prod (M1.lines, M1.cols);
+    double aux = 0.;
+    for (int i=0; i< prod.lines ; i++) {
+        for (int j=0; j<prod.cols; j++) {
+            for (int k=0; k<prod.cols; k++) {
+                aux += M1.elementos[i*M1.cols+k] * M2.elementos[k*M1.cols+j];
+            }
+            prod.elementos[i*M1.cols+j] = aux;
+            aux = 0.;
         }
     }
     return prod;
 }
-
-/**
-my_matrix Inverse(const my_matrix& a)
-{
-	int rows = a.dim1;
-	int cols = a.dim2;
-	double d = 0;    // value of the determinant
-	mymatrix res(rows,cols);
-	
-	  d = Det(a);
-  if (rows == cols && d != 0)
-  {
-    // this is a square matrix
-    if (rows == 1)
-    {
-      // this is a 1 x 1 matrix
-      res(0, 0) = 1. / a(0, 0);
-    }
-    else if (rows == 2)
-    {
-      // this is a 2 x 2 matrix
-      res = Matrix(rows, cols);
-      res(1, 1) = a.get(2, 2);
-      res(1, 2) = -a.get(1, 2);
-      res(2, 1) = -a.get(2, 1);
-      res(2, 2) = a.get(1, 1);
-      res = (1/d) * res;
-    }
-    else
-    {
-      // this is a matrix of 3 x 3 or larger
-      // calculate inverse using gauss-jordan elimination
-      //   http://mathworld.wolfram.com/MatrixInverse.html
-      //   http://math.uww.edu/~mcfarlat/inverse.htm
-      res = Diag(rows);   // a diagonal matrix with ones at the diagonal
-      Matrix ai = a;    // make a copy of Matrix a
-
-      for (int c = 1; c <= cols; c++)
-      {
-        // element (c, c) should be non zero. if not, swap content
-        // of lower rows
-        int r;
-        for (r = c; r <= rows && ai(r, c) == 0; r++)
-        {
-        }
-        if (r != c)
-        {
-          // swap rows
-          for (int s = 1; s <= cols; s++)
-          {
-            Swap(ai(c, s), ai(r, s));
-            Swap(res(c, s), res(r, s));
-          }
-        }
-
-        // eliminate non-zero values on the other rows at column c
-        for (int r = 1; r <= rows; r++)
-        {
-          if(r != c)
-          {
-            // eleminate value at column c and row r
-            if (ai(r, c) != 0)
-            {
-              double f = - ai(r, c) / ai(c, c);
-
-              // add (f * row c) to row r to eleminate the value
-              // at column c
-              for (int s = 1; s <= cols; s++)
-              {
-                ai(r, s) += f * ai(c, s);
-                res(r, s) += f * res(c, s);
-              }
-            }
-          }
-          else
-          {
-            // make value at (c, c) one,
-            // divide each value on row r with the value at ai(c,c)
-            double f = ai(c, c);
-            for (int s = 1; s <= cols; s++)
-            {
-              ai(r, s) /= f;
-              res(r, s) /= f;
-            }
-          }
-        }
-      }
-    }
-  }
-  else
-  {
-    if (rows == cols)
-    {
-      throw Exception("Matrix must be square");
-    }
-    else
-    {
-      throw Exception("Determinant of matrix is zero");
-    }
-  }
-  return res;
-
-
-}
-
-**/
-
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////
+// END Class my_matrix
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 
 
 
