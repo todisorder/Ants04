@@ -7,6 +7,7 @@
 #include <iomanip>  
 #include <random>
 
+
 using namespace std;
 
 #include "Classes.h"
@@ -45,7 +46,7 @@ int main (void){
     formiga2.Walk(fero);
     cout << "HEY3:  " << formiga2.AntPosX <<endl;
     cout << "HEY4:  " << fero.Density(1,1) <<endl;
-
+    cout << "HEY5:  " << parametro <<endl;
     return 0;
 }
 
