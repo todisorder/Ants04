@@ -1,11 +1,11 @@
 
 
 // Forward Declarations
-//class my_matrix;
-//my_matrix Inverse(const my_matrix& a);
-//double Det(const my_matrix& a);
+//class matriz;
+//matriz Inverse(const matriz& a);
+//double Det(const matriz& a);
 
-
+static double const parametro = 13.4;
 
 ////////////////////////////////////////////////////////
 // Class Numerics (data)
@@ -43,7 +43,7 @@ public:
 ////////////////////////////////////////////////////////
 
 
-#include "matriz.h"
+#include "Matrix.h"
 
 
 /********************************************************************/
@@ -56,7 +56,7 @@ public:
     
     //    Pheromone (Dados);
     
-    my_matrix PheromoneDensity;
+    Matrix Density;
     
     double DiffPhero;
     double EvaporationPhero ;                // Vai ser = 1 na dimensionalização; só por completude.
@@ -64,9 +64,74 @@ public:
     double ProductionRatesPhero ;           // Por agora só um pra todos...
     
     Pheromone () {}
-    Pheromone (Numerics par) : PheromoneDensity(par) {}
+    Pheromone (Numerics par) : Density(par) {}
     
 };
+/********************************************************************/
+//					END Classe Pheromone
+/********************************************************************/
+
+
+/********************************************************************/
+//					Class Ant
+/********************************************************************/
+class Ant
+{
+public:
+    
+    
+    double AntPosX;
+    double AntPosY;
+    double AntVelX;
+    double AntVelY;
+    double AntHomeDirX;
+    double AntHomeDirY;
+    bool IsReturning;
+    
+    void Walk(Pheromone& current_pheromone);
+    
+    //  Constructors
+    Ant () {
+        AntPosX = parametro;
+    }
+    Ant (const double posX, const double posY){
+        AntPosX = posX;
+        AntPosY = posY;
+        AntVelX = 0.;
+        AntVelY = 0.;
+        IsReturning = false;
+    }
+    Ant (Numerics data) {
+    }
+    //  End Constructors
+    
+    
+    
+};
+/********************************************************************/
+//					END Class Ant
+/********************************************************************/
+//					Class Ant Functions
+/********************************************************************/
+//////////////////////////////////////////////////////////////////////
+//                  Ant::Walk
+//              Here goes each iteration calculation.
+//////////////////////////////////////////////////////////////////////
+
+void Ant::Walk(Pheromone& current_pheromone){
+    AntPosX = AntPosX + 200.;
+    cout << "Estou dentro de Walk:  " << current_pheromone.Density(1,1) <<endl;
+    current_pheromone.Density(1,1) = 39.;
+}
+//////////////////////////////////////////////////////////////////////
+//                  END Ant::Walk
+//////////////////////////////////////////////////////////////////////
+
+
+/********************************************************************/
+//					END Class Ant Functions
+/********************************************************************/
+
 
 
 

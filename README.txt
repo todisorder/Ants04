@@ -4,7 +4,9 @@ New Repository
 https://github.com/todisorder/Ants04.git
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+25 de Abril 2016:
 
+>> Mudei as matrizes. AGORA USO Matrix.cpp !!!!
 
 
 25 de Abril 2016:

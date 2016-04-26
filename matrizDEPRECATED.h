@@ -1,17 +1,17 @@
 
 ////////////////////////////////////////////////////////
-//  Class my_matrix
+//  Class matriz
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
-class my_matrix {
+class matriz {
 public:
     int lines,cols;
     double * elementos;
     
     
-    my_matrix (){}
-    my_matrix (int m,int n)
+    matriz (){}
+    matriz (int m,int n)
     {
         lines=m;
         cols=n;
@@ -22,7 +22,7 @@ public:
             }
         }
     }
-    my_matrix (Numerics& data)
+    matriz (Numerics& data)
     {
         lines=data.numxx;
         cols=data.numyy;
@@ -33,7 +33,7 @@ public:
             }
         }
     }
-    //    ~my_matrix()
+    //    ~matriz()
     //    {
     //        delete[] elementos;
     //    }
@@ -70,9 +70,9 @@ public:
 };
 
 // Ver http://condor.depaul.edu/ntomuro/courses/262/notes/lecture3.html
-my_matrix operator+(const my_matrix &M1, const my_matrix &M2)
+matriz operator+(const matriz &M1, const matriz &M2)
 {
-    my_matrix soma (M1.lines, M1.cols);
+    matriz soma (M1.lines, M1.cols);
     for (int i=0; i< soma.lines ; i++) {
         for (int j=0; j<soma.cols; j++) {
             soma.elementos[i*M1.cols+j] = M1.elementos[i*M1.cols+j] + M2.elementos[i*M1.cols+j];
@@ -80,9 +80,9 @@ my_matrix operator+(const my_matrix &M1, const my_matrix &M2)
     }
     return soma;
 }
-my_matrix operator-(const my_matrix &M1, const my_matrix &M2)
+matriz operator-(const matriz &M1, const matriz &M2)
 {
-    my_matrix soma (M1.lines, M1.cols);
+    matriz soma (M1.lines, M1.cols);
     for (int i=0; i< soma.lines ; i++) {
         for (int j=0; j<soma.cols; j++) {
             soma.elementos[i*M1.cols+j] = M1.elementos[i*M1.cols+j] - M2.elementos[i*M1.cols+j];
@@ -90,9 +90,9 @@ my_matrix operator-(const my_matrix &M1, const my_matrix &M2)
     }
     return soma;
 }
-my_matrix operator*(const my_matrix &M1, const double C)
+matriz operator*(const matriz &M1, const double C)
 {
-    my_matrix prod (M1.lines, M1.cols);
+    matriz prod (M1.lines, M1.cols);
     prod = M1;
     
     for (int i=0; i< prod.lines ; i++) {
@@ -102,9 +102,9 @@ my_matrix operator*(const my_matrix &M1, const double C)
     }
     return prod;
 }
-my_matrix operator*(const my_matrix &M1, const my_matrix &M2)
+matriz operator*(const matriz &M1, const matriz &M2)
 {
-    my_matrix prod (M1.lines, M1.cols);
+    matriz prod (M1.lines, M1.cols);
     double aux = 0.;
     for (int i=0; i< prod.lines ; i++) {
         for (int j=0; j<prod.cols; j++) {
@@ -118,7 +118,7 @@ my_matrix operator*(const my_matrix &M1, const my_matrix &M2)
     return prod;
 }
 ////////////////////////////////////////////////////////
-// END Class my_matrix
+// END Class matriz
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
