@@ -46,7 +46,15 @@ int main (void){
     formiga2.Walk(fero);
     cout << "HEY3:  " << formiga2.AntPosX <<endl;
     cout << "HEY4:  " << fero.Density(1,1) <<endl;
-    cout << "HEY5:  " << parametro <<endl;
+    cout << "HEY5:  " << parametro <<endl;  //  Can use parametro because it is defined in Classes.h
+    
+    cout << "HEY6:  " << formiga1.AntDepositedPhero(1,1) << endl;
+    fero.Update(formiga1.AntDepositedPhero);
+    formiga1.AntDepositedPhero.Print();
+    fero.Density.Print();
+    
+    
+    
     return 0;
 }
 

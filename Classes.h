@@ -44,7 +44,7 @@ public:
 
 
 #include "Matrix.h"
-
+class Ant;
 
 /********************************************************************/
 //					Classe Pheromone
@@ -66,7 +66,13 @@ public:
     Pheromone () {}
     Pheromone (Numerics par) : Density(par) {}
     
+    void Update(Matrix& mat);      // This function will only add the values in mat to the
+                                            //      values of Density.
+    
 };
+void Pheromone::Update(Matrix& mat){
+    Pheromone::Density(1,1) = 53.6;
+}
 /********************************************************************/
 //					END Classe Pheromone
 /********************************************************************/
@@ -87,6 +93,7 @@ public:
     double AntHomeDirX;
     double AntHomeDirY;
     bool IsReturning;
+    Matrix AntDepositedPhero;
     
     void Walk(Pheromone& current_pheromone);
     
@@ -101,7 +108,14 @@ public:
         AntVelY = 0.;
         IsReturning = false;
     }
-    Ant (Numerics data) {
+    Ant (Numerics data) : AntDepositedPhero(data) {
+        AntPosX = 0.;
+        AntPosY = 0.;
+        AntVelX = 0.;
+        AntVelY = 0.;
+        IsReturning = false;
+        
+
     }
     //  End Constructors
     
