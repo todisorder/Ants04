@@ -1,4 +1,4 @@
-
+//	From: http://www.speqmath.com/tutorials/matrix/matrix.html
 
 /*
  A simple matrix class
