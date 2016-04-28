@@ -1,11 +1,11 @@
 
 
-// Forward Declarations
-//class matriz;
-//matriz Inverse(const matriz& a);
-//double Det(const matriz& a);
 
-static double const parametro = 13.4;
+//static double const parametro = 13.4;
+double  parametro = 13.4;
+
+
+
 
 ////////////////////////////////////////////////////////
 // Class Numerics (data)
@@ -16,7 +16,7 @@ class Numerics {
     
 public:
     int numiter ;
-    double numxx ;
+    double numxx ;  //sdsfs
     double numyy ;
     string Comm;
     
@@ -49,30 +49,30 @@ class Ant;
 /********************************************************************/
 //					Classe Pheromone
 /********************************************************************/
-class Pheromone
-{
-public:
-    //    friend class Ants ;     //Acho que não precisa, só se precisasse de coisas private do Ants;
-    
-    //    Pheromone (Dados);
-    
-    Matrix Density;
-    
-    double DiffPhero;
-    double EvaporationPhero ;                // Vai ser = 1 na dimensionalização; só por completude.
-    //    double * ProductionRatesPhero ;         // Um para cada população!
-    double ProductionRatesPhero ;           // Por agora só um pra todos...
-    
-    Pheromone () {}
-    Pheromone (Numerics par) : Density(par) {}
-    
-    void Update(Matrix& mat);      // This function will only add the values in mat to the
-                                            //      values of Density.
-    
-};
-void Pheromone::Update(Matrix& mat){
-    Pheromone::Density(1,1) = 53.6;
-}
+//class Pheromone
+//{
+//public:
+//    //    friend class Ants ;     //Acho que não precisa, só se precisasse de coisas private do Ants;
+//    
+//    //    Pheromone (Dados);
+//    
+//    Matrix Density;
+//    
+//    double DiffPhero;
+//    double EvaporationPhero ;                // Vai ser = 1 na dimensionalização; só por completude.
+//    //    double * ProductionRatesPhero ;         // Um para cada população!
+//    double ProductionRatesPhero ;           // Por agora só um pra todos...
+//    
+//    Pheromone () {}
+//    Pheromone (Numerics par) : Density(par) {}
+//    
+//    void Update(Matrix& mat);      // This function will only add the values in mat to the
+//                                            //      values of Density.
+//    
+//};
+//void Pheromone::Update(Matrix& mat){
+//    Pheromone::Density(1,1) = 53.6;
+//}
 /********************************************************************/
 //					END Classe Pheromone
 /********************************************************************/
@@ -85,6 +85,10 @@ class Ant
 {
 public:
     
+    static Matrix Pheromone;
+                        // cf. http://www.tutorialspoint.com/cplusplus/cpp_static_members.htm
+                        //  This way (a static Matrix) I don't need the Pheromone class.
+                        //  Bit dx, dy, etc must now be defined in the beggining of the main file.
     
     double AntPosX;
     double AntPosY;
@@ -95,11 +99,12 @@ public:
     bool IsReturning;
     Matrix AntDepositedPhero;
     
-    void Walk(Pheromone& current_pheromone);
+    void Walk();
     
     //  Constructors
     Ant () {
         AntPosX = parametro;
+        AntPosY = 456.7;
     }
     Ant (const double posX, const double posY){
         AntPosX = posX;
@@ -119,9 +124,9 @@ public:
     }
     //  End Constructors
     
-    
-    
 };
+Matrix Ant::Pheromone = Zeros(numxx,numyy);
+
 /********************************************************************/
 //					END Class Ant
 /********************************************************************/
@@ -132,10 +137,10 @@ public:
 //              Here goes each iteration calculation.
 //////////////////////////////////////////////////////////////////////
 
-void Ant::Walk(Pheromone& current_pheromone){
+void Ant::Walk(){
     AntPosX = AntPosX + 200.;
-    cout << "Estou dentro de Walk:  " << current_pheromone.Density(1,1) <<endl;
-    current_pheromone.Density(1,1) = 39.;
+    cout << "Estou dentro de Walk:  " << Pheromone(1,1) <<endl; // Read Pheromone ok
+    Pheromone(1,1) = 39.;                                       // Change Pheromone ok
 }
 //////////////////////////////////////////////////////////////////////
 //                  END Ant::Walk

@@ -10,6 +10,11 @@
 
 using namespace std;
 
+static double const numxx = 10.;
+static double const numyy = 10.;
+
+
+
 #include "Classes.h"
 //#include "matriz.h"
 //#include "Matrix.h"
@@ -17,6 +22,8 @@ using namespace std;
 
 
 int main (void){
+    
+    static double const parametro2 = 532.4;
     
     Numerics Teste;
 //    matriz MT(4,4);
@@ -35,24 +42,34 @@ int main (void){
     
     cout << "Here: "<<T3(1,1) <<endl;
     
-    Pheromone fero(Teste);
-    cout << fero.Density.rows <<endl;
+    Ant formiga3;
+    cout << "LALALA:  " << Ant::Pheromone(1,1) <<endl;
+    formiga3.Walk();
+    cout << "LALALA 2:  " << Ant::Pheromone(1,1) <<endl;
+//    Pheromone fero(Teste);
+//    cout << fero.Density.rows <<endl;
     
-    Ant formiga1(Teste);
-    formiga1.IsReturning = true;
-    cout << "HEY:  " << formiga1.IsReturning <<endl;
-    Ant formiga2;
-    cout << "HEY2:  " << formiga2.AntPosX <<endl;
-    formiga2.Walk(fero);
-    cout << "HEY3:  " << formiga2.AntPosX <<endl;
-    cout << "HEY4:  " << fero.Density(1,1) <<endl;
-    cout << "HEY5:  " << parametro <<endl;  //  Can use parametro because it is defined in Classes.h
-    
-    cout << "HEY6:  " << formiga1.AntDepositedPhero(1,1) << endl;
-    fero.Update(formiga1.AntDepositedPhero);
-    formiga1.AntDepositedPhero.Print();
-    fero.Density.Print();
-    
+//    Ant formiga1(Teste);
+//    formiga1.IsReturning = true;
+//    cout << "HEY:  " << formiga1.IsReturning <<endl;
+//    Ant formiga2;
+//    cout << "HEY2:  " << formiga2.AntPosX <<endl;
+////    formiga2.Walk(fero);
+//    cout << "HEY3:  " << formiga2.AntPosX <<endl;
+////    cout << "HEY4:  " << fero.Density(1,1) <<endl;
+//    cout << "HEY5:  " << parametro <<endl;  //  Can use parametro because it is defined in Classes.h
+//    
+//    cout << "HEY6:  " << formiga1.AntDepositedPhero(1,1) << endl;
+////    fero.Update(formiga1.AntDepositedPhero);
+//    formiga1.AntDepositedPhero.Print();
+////    fero.Density.Print();
+//    
+//    int NN = 3;
+//    
+//    Ant * Pop;
+//    Pop = new Ant[NN];
+////    cout << "Agora:  " << Pop[1].AntDepositedPhero(1,1) <<endl;
+//    cout << "Agora:  " << Pop[1].AntPosY <<endl;
     
     
     return 0;
