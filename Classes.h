@@ -16,18 +16,18 @@ class Numerics {
     
 public:
     int numiter ;
-    double numxx ;  //sdsfs
-    double numyy ;
+    double numxx = 10.;
+    double numyy = 10.;
     string Comm;
     
     Numerics (){
-        cout << "// Comments:" << endl;
+        cout << "Comments:" << endl;
         getline(cin, Comm, '\n');               // Nice... de http://www.cprogramming.com/tutorial/string.html
-        cout << "// Number of x intervals:" << endl;
-        cin >> numxx ;
-        cout << "// Number of y intervals:" << endl;
-        cin >> numyy ;
-        cout << "// Number of time iterations:" << endl;
+//        cout << "// Number of x intervals:" << endl;
+//        cin >> numxx ;
+//        cout << "// Number of y intervals:" << endl;
+//        cin >> numyy ;
+        cout << "Number of time iterations:" << endl;
         cin >> numiter ;
         cin.ignore() ;
         // Because C++!! ver http://stackoverflow.com/questions/12691316/getline-does-not-work-if-used-after-some-inputs
@@ -77,6 +77,25 @@ class Ant;
 //					END Classe Pheromone
 /********************************************************************/
 
+//////////////////////////////////////////////////////////////////////
+///////////HH////////////HHH/////////HH///HHHHHHHHHHHHH///////////////
+//////////HH/HH//////////HH/HH///////HH////////HH/////////////////////
+/////////HH///HH/////////HH//HH//////HH////////HH/////////////////////
+////////HH//////HH///////HH///HH/////HH////////HH/////////////////////
+////////HH///////HH//////HH////HH////HH////////HH/////////////////////
+///////HHHHHHHHHHHH//////HH/////HH///HH////////HH/////////////////////
+//////HH//////////HH/////HH//////HH//HH////////HH/////////////////////
+/////HH////////////HH////HH///////HH/HH////////HH/////////////////////
+/////HH/////////////HH///HH////////HHHH////////HH/////////////////////
+////HH///////////////HH//HH//////////HH////////HH/////////////////////
+//////////////////////////////////////////////////////////////////////
+//    /   \     |  \ |  | |           |   /       |
+//   /  ^  \    |   \|  | `---|  |----`  |   (----`
+//  /  /_\  \   |  . `  |     |  |        \   \
+// /  _____  \  |  |\   |     |  |    .----)   |
+///__/     \__\ |__| \__|     |__|    |_______/
+//////////////////////////////////////////////////////////////////////
+
 
 /********************************************************************/
 //					Class Ant
@@ -86,9 +105,9 @@ class Ant
 public:
     
     static Matrix Pheromone;
-                        // cf. http://www.tutorialspoint.com/cplusplus/cpp_static_members.htm
+                        //  ^^^cf. http://www.tutorialspoint.com/cplusplus/cpp_static_members.htm
                         //  This way (a static Matrix) I don't need the Pheromone class.
-                        //  Bit dx, dy, etc must now be defined in the beggining of the main file.
+                        //  But dx, dy, etc must now be defined in the beggining of the main file.
     
     double AntPosX;
     double AntPosY;
@@ -100,20 +119,28 @@ public:
     Matrix AntDepositedPhero;
     
     void Walk();
+    void UpdatePhero();
+//    double IndexXOf(double position);    // Compute matrix index i associated to position.
+//    double IndexYOf(double position);    // Compute matrix index j associated to position.
+    double PheromoneConcentration();    // Evaluate Pheromone at ant position.
+    double PheromoneGradientX();
+    double PheromoneGradientY();
+    double ForceX();
+    double ForceY();
     
     //  Constructors
     Ant () {
         AntPosX = parametro;
         AntPosY = 456.7;
     }
-    Ant (const double posX, const double posY){
+    Ant (const double posX, const double posY) {
         AntPosX = posX;
         AntPosY = posY;
         AntVelX = 0.;
         AntVelY = 0.;
         IsReturning = false;
     }
-    Ant (Numerics data) : AntDepositedPhero(data) {
+    Ant (Numerics data) : AntDepositedPhero(numxx, numyy) {
         AntPosX = 0.;
         AntPosY = 0.;
         AntVelX = 0.;
@@ -139,14 +166,213 @@ Matrix Ant::Pheromone = Zeros(numxx,numyy);
 
 void Ant::Walk(){
     AntPosX = AntPosX + 200.;
-    cout << "Estou dentro de Walk:  " << Pheromone(1,1) <<endl; // Read Pheromone ok
-    Pheromone(1,1) = 39.;                                       // Change Pheromone ok
+    Pheromone(1,1) += 39.;                                       // Change Pheromone ok
+//    cout << "Estou dentro de Walk:  " << Pheromone(1,1) <<endl; // Read Pheromone ok
 }
 //////////////////////////////////////////////////////////////////////
 //                  END Ant::Walk
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//double Ant::IndexXOf(double position){
+//    double iofXpos = (position - x_1)/delta_x;
+//    iofXpos = max(1.,iofXpos);
+//    iofXpos = min(numxx,iofXpos);
+//    return iofXpos;
+//}
+//double Ant::IndexYOf(double position){
+//    double jofYpos = (position - y_1)/delta_y;
+//    jofYpos = max(1.,jofYpos);
+//    jofYpos = min(numyy,jofYpos);
+//    return jofYpos;
+//}
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//                  Ant::PheromoneConcentration
+//                  Pointwise evaluation of Pheromone.
+//////////////////////////////////////////////////////////////////////
 
-
+double Ant::PheromoneConcentration(){
+//    double iofXpos = (AntPosX - x_1)/delta_x;
+//    iofXpos = max(1.,iofXpos);
+//    iofXpos = min(numxx,iofXpos);
+//    double jofYpos = (AntPosY - y_1)/delta_y;
+//    jofYpos = max(1.,jofYpos);
+//    jofYpos = min(numyy,jofYpos);
+    double iofXpos = IndexXOf(AntPosX);
+    double jofYpos = IndexYOf(AntPosY);
+//    cout << "AAAHH:   " << iofXpos << ",,,,"<< jofYpos << endl;
+//    cout << "Estou dentro de PheromoneConcentration:  " << Pheromone(1,1) <<endl;
+    return Pheromone(iofXpos,jofYpos);
+}
+//////////////////////////////////////////////////////////////////////
+//                  END Ant::PheromoneConcentration
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//                  Ant::PheromoneGradientX
+//                  Pointwise evaluation of Pheromone Gradient.
+//////////////////////////////////////////////////////////////////////
+double Ant::PheromoneGradientX(){
+    double aux=0.;
+    double iofXpos = IndexXOf(AntPosX);
+    double jofYpos = IndexYOf(AntPosY);
+    if (iofXpos < numxx) {
+        aux = Pheromone(iofXpos+1,jofYpos) - Pheromone(iofXpos,jofYpos);
+        aux = aux/delta_x;
+    } else {
+        aux = 0.;       // TEMP in boundary!!
+    }
+    return aux;
+}
+//////////////////////////////////////////////////////////////////////
+//                  END Ant::PheromoneGradientX
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//                  Ant::PheromoneGradientY
+//                  Pointwise evaluation of Pheromone Gradient.
+//////////////////////////////////////////////////////////////////////
+double Ant::PheromoneGradientY(){
+    double aux=0.;
+    double iofXpos = IndexXOf(AntPosX);
+    double jofYpos = IndexYOf(AntPosY);
+    if (jofYpos < numyy) {
+        aux = Pheromone(iofXpos,jofYpos+1) - Pheromone(iofXpos,jofYpos);
+        aux = aux/delta_y;
+    } else {
+        aux = 0.;
+    }
+    return aux;
+}
+//////////////////////////////////////////////////////////////////////
+//                  END Ant::PheromoneGradientY
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//_______   ______   .______        ______  _______   ////////////////
+//|   ____| /  __  \  |   _  \      /      ||   ____| ////////////////
+//|  |__   |  |  |  | |  |_)  |    |  ,----'|  |__    ////////////////
+//|   __|  |  |  |  | |      /     |  |     |   __|   ////////////////
+//|  |     |  `--'  | |  |\  \----.|  `----.|  |____  ////////////////
+//|__|      \______/  | _| `._____| \______||_______| ////////////////
+//                                                    ////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//                  Ant::ForceX
+//                  Pointwise evaluation of Force (desired velocity).
+//////////////////////////////////////////////////////////////////////
+double Ant::ForceX(){
+    double aux=0.;
+    double auxX=0.;
+    
+    double A11 = sin(2.*SensingAreaHalfAngle)/2.
+    * cos(2.*Angle(AntVelX,AntVelY));
+    
+    double A12 = sin(2.*SensingAreaHalfAngle)/2.
+    * sin(2.*Angle(AntVelX,AntVelY));
+    
+    aux = (2./3.) * pow(SENSING_AREA_RADIUS,3.) * Lambda * cos(Angle(AntVelX,AntVelY))
+    * PheromoneConcentration() * sin(SensingAreaHalfAngle)
+    + (1./4.)*pow(SENSING_AREA_RADIUS,4.) * Lambda
+    * (SensingAreaHalfAngle * PheromoneGradientX()
+       + A11 * PheromoneGradientX() + A12 * PheromoneGradientY());
+    
+    auxX = PheromoneConcentration()*SENSING_AREA_RADIUS*SENSING_AREA_RADIUS
+    * SensingAreaHalfAngle
+    + PheromoneGradientX() * (2./3.) * pow(SENSING_AREA_RADIUS,3.)
+    * cos(Angle(AntVelX,AntVelY)) * sin(SensingAreaHalfAngle)
+    + PheromoneGradientY() * (2./3.) * pow(SENSING_AREA_RADIUS,3.)
+    * sin(Angle(AntVelX,AntVelY)) * sin(SensingAreaHalfAngle);
+    
+    auxX = RegularizingFunction(auxX);
+    
+    aux = aux/auxX;
+    
+    return aux;
+}
+//////////////////////////////////////////////////////////////////////
+//                  END Ant::ForceX
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//                  Ant::ForceY
+//                  Pointwise evaluation of Force (desired velocity).
+//////////////////////////////////////////////////////////////////////
+double Ant::ForceY(){
+    double aux=0.;
+    double auxY=0.;
+    
+    double A22 = - sin(2.*SensingAreaHalfAngle)/2.
+    * cos(2.*Angle(AntVelX,AntVelY));
+    
+    double A21 = sin(2.*SensingAreaHalfAngle)/2.
+    * sin(2.*Angle(AntVelX,AntVelY));
+    
+    aux = (2./3.) *  pow(SENSING_AREA_RADIUS,3.) * Lambda * sin(Angle(AntVelX,AntVelY))
+    * PheromoneConcentration() * sin(SensingAreaHalfAngle)
+    + (1./4.)*pow(SENSING_AREA_RADIUS,4.) * Lambda
+    * (SensingAreaHalfAngle * PheromoneGradientY()
+       + A21 * PheromoneGradientX() + A22 * PheromoneGradientY())
+    ;
+    
+    auxY = PheromoneConcentration()*SENSING_AREA_RADIUS*SENSING_AREA_RADIUS
+    * SensingAreaHalfAngle
+    + PheromoneGradientX() * (2./3.) * pow(SENSING_AREA_RADIUS,3.)
+    * cos(Angle(AntVelX,AntVelY)) * sin(SensingAreaHalfAngle)
+    + PheromoneGradientY() * (2./3.) * pow(SENSING_AREA_RADIUS,3.)
+    * sin(Angle(AntVelX,AntVelY)) * sin(SensingAreaHalfAngle);
+    
+    auxY = RegularizingFunction(auxY);
+    
+    aux = aux/auxY;
+    
+    return aux;
+}
+//////////////////////////////////////////////////////////////////////
+//                  END Ant::ForceY
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// __    __  .______    _______       ___   .___________. _______
+//|  |  |  | |   _  \  |       \     /   \  |           ||   ____|
+//|  |  |  | |  |_)  | |  .--.  |   /  ^  \ `---|  |----`|  |__
+//|  |  |  | |   ___/  |  |  |  |  /  /_\  \    |  |     |   __|
+//|  `--'  | |  |      |  '--'  | /  _____  \   |  |     |  |____
+// \______/  | _|      |_______/ /__/     \__\  |__|     |_______|
+//
+//.______    __    __   _______ .______        ______
+//|   _  \  |  |  |  | |   ____||   _  \      /  __  \
+//|  |_)  | |  |__|  | |  |__   |  |_)  |    |  |  |  |
+//|   ___/  |   __   | |   __|  |      /     |  |  |  |
+//|  |      |  |  |  | |  |____ |  |\  \----.|  `--'  |
+//| _|      |__|  |__| |_______|| _| `._____| \______/
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+void Ant::UpdatePhero(){
+//    ______      _                     _ _      _ _
+//    | ___ \    | |                   | (_)    (_) |
+//    | |_/ /   _| |_    _____  ___ __ | |_  ___ _| |_
+//    |  __/ | | | __|  / _ \ \/ / '_ \| | |/ __| | __|
+//    | |  | |_| | |_  |  __/>  <| |_) | | | (__| | |_
+//    \_|   \__,_|\__|  \___/_/\_\ .__/|_|_|\___|_|\__|
+//                               | |
+//                               |_|
+//     __                           _
+//    / _|                         | |
+//   | |_ ___  _ __ _ __ ___  _   _| | __ _
+//   |  _/ _ \| '__| '_ ` _ \| | | | |/ _` |
+//   | || (_) | |  | | | | | | |_| | | (_| |
+//   |_| \___/|_|  |_| |_| |_|\__,_|_|\__,_|
+    //
+    //  With AntPosX etc. From heat equation.
+    }
 /********************************************************************/
 //					END Class Ant Functions
 /********************************************************************/
