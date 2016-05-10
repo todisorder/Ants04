@@ -9,7 +9,7 @@ echo "reset" >> plots.plt
 echo "set parametric" >> plots.plt
 echo "Generating gnuplot source code..."
 
-echo "set term png font \"arial,12\"  size 240, 840
+echo "set term png font \"arial,12\"  size 840, 840
 #unset xtics
 #unset ytics
 set title ''

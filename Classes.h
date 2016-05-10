@@ -119,7 +119,7 @@ public:
     Matrix AntDepositedPhero;
     
     void Walk();
-    void UpdatePhero();
+    static void UpdatePhero(Matrix& mat);
 //    double IndexXOf(double position);    // Compute matrix index i associated to position.
 //    double IndexYOf(double position);    // Compute matrix index j associated to position.
     double PheromoneConcentration();    // Evaluate Pheromone at ant position.
@@ -129,15 +129,19 @@ public:
     double ForceY();
     
     //  Constructors
-    Ant () {
-        AntPosX = parametro;
-        AntPosY = 456.7;
+    Ant () : AntDepositedPhero(numxx, numyy){
+        AntPosX = 0.;
+        AntPosY = 0.;
+        AntVelX = 0.1;
+        AntVelY = 0.1;
+        IsReturning = false;
+
     }
-    Ant (const double posX, const double posY) {
+    Ant (const double posX, const double posY) : AntDepositedPhero(numxx, numyy){
         AntPosX = posX;
         AntPosY = posY;
-        AntVelX = 0.;
-        AntVelY = 0.;
+        AntVelX = 0.1;
+        AntVelY = 0.1;
         IsReturning = false;
     }
     Ant (Numerics data) : AntDepositedPhero(numxx, numyy) {
@@ -159,32 +163,124 @@ Matrix Ant::Pheromone = Zeros(numxx,numyy);
 /********************************************************************/
 //					Class Ant Functions
 /********************************************************************/
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//     ___      .__   __. .___________.   ____    __    ____  ___       __       __  ___
+//    /   \     |  \ |  | |           |   \   \  /  \  /   / /   \     |  |     |  |/  /
+//   /  ^  \    |   \|  | `---|  |----`    \   \/    \/   / /  ^  \    |  |     |  '  /
+//  /  /_\  \   |  . `  |     |  |          \            / /  /_\  \   |  |     |    <
+// /  _____  \  |  |\   |     |  |           \    /\    / /  _____  \  |  `----.|  .  \
+///__/     \__\ |__| \__|     |__|            \__/  \__/ /__/     \__\ |_______||__|\__\
+////////////////////////////////////////////////////////////////////////////////////////
 //                  Ant::Walk
 //              Here goes each iteration calculation.
 //////////////////////////////////////////////////////////////////////
-
 void Ant::Walk(){
-    AntPosX = AntPosX + 200.;
-    Pheromone(1,1) += 39.;                                       // Change Pheromone ok
-//    cout << "Estou dentro de Walk:  " << Pheromone(1,1) <<endl; // Read Pheromone ok
+    double ii = IndexXOf(AntPosX);
+    double jj = IndexYOf(AntPosY);
+    //  Reset deposited pheromone
+    AntDepositedPhero = 0.*AntDepositedPhero;
+    double AntXposNew;
+    double AntYposNew;
+    double AntVelXNew;
+    double AntVelYNew;
+    double AntXposOld = AntPosX;
+    double AntYposOld = AntPosY;
+    double AntVelXOld = AntVelX;
+    double AntVelYOld = AntVelY;
+    double RandomWalkVelX = 0.;
+    double RandomWalkVelY = 0.;
+    double RandomWalkVelXnew = RandomWalkVelX;
+    double RandomWalkVelYnew = RandomWalkVelY;
+    
+    double RandomAngle = Uniform(generator);
+    double Rzero = SmallNormal(generator);
+
+    ////////////////////////////////////////////////////////
+    // Cálculo do Random Walk
+    ////////////////////////////////////////////////////////
+    
+    RandomWalkVelXnew = Rzero * cos(RandomAngle);
+    RandomWalkVelYnew = Rzero * sin(RandomAngle);
+
+    ////////////////////////////////////////////////////////
+    // End Cálculo do Random Walk
+    ////////////////////////////////////////////////////////
+
+    
+    ////////////////////////////////////////////////////////
+    // Evolução
+    ////////////////////////////////////////////////////////
+
+    AntVelXNew = AntVelXOld + delta_t * ( -(1./TAU)*( AntVelXOld - ForceX() - RandomWalkVelXnew * Turn_off_random) );
+    
+    
+    AntVelYNew = AntVelYOld + delta_t * ( -(1./TAU)*( AntVelYOld - ForceY() - RandomWalkVelYnew* Turn_off_random) );
+
+    AntXposNew = AntXposOld + delta_t * (AntVelXNew);
+    
+    AntYposNew = AntYposOld + delta_t * (AntVelYNew);
+
+    ////////////////////////////////////////////////////////
+    // End Evolução
+    ////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////
+    // Fronteira PERIODIC!
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    
+    if (AntXposNew <= x_1) {
+        AntXposNew = AntXposNew + (x_2 - x_1);
+        ChangedSide = 1;
+    }
+    if (AntXposNew >= x_2) {
+        AntXposNew = AntXposNew - (x_2 - x_1);
+        ChangedSide = 1;
+    }
+    if (AntYposNew <= y_1) {
+        AntYposNew = AntYposNew + (y_2 - y_1);
+        ChangedSide = 1;
+    }
+    if (AntYposNew >= y_2) {
+        AntYposNew = AntYposNew - (y_2 - y_1);
+        ChangedSide = 1;
+    }
+    
+    ////////////////////////////////////////////////////////
+    // End Fronteira PERIODIC!
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    
+    ////////////////////////////////////////////////////////
+    // Atualização:
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+
+    AntPosX = AntXposNew;
+    AntPosY = AntYposNew;
+    AntVelX = AntVelXNew;
+    AntVelY = AntVelYNew;
+    
+    AntDepositedPhero(ii,jj) = 0.1;
+
+    
+//    AntDepositedPhero(3,3) = 5.89;  //OK, can change
+//    AntPosX = AntPosX + 200.;
+//    Pheromone(1,1) += 39.;
+//    Pheromone(2,2) = PheromoneConcentration();  //OK, can use
+//    Pheromone(2,2) = ForceX();  //OK, can use
+//    
+
+
+
 }
 //////////////////////////////////////////////////////////////////////
 //                  END Ant::Walk
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-//double Ant::IndexXOf(double position){
-//    double iofXpos = (position - x_1)/delta_x;
-//    iofXpos = max(1.,iofXpos);
-//    iofXpos = min(numxx,iofXpos);
-//    return iofXpos;
-//}
-//double Ant::IndexYOf(double position){
-//    double jofYpos = (position - y_1)/delta_y;
-//    jofYpos = max(1.,jofYpos);
-//    jofYpos = min(numyy,jofYpos);
-//    return jofYpos;
-//}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //                  Ant::PheromoneConcentration
@@ -202,7 +298,7 @@ double Ant::PheromoneConcentration(){
     double jofYpos = IndexYOf(AntPosY);
 //    cout << "AAAHH:   " << iofXpos << ",,,,"<< jofYpos << endl;
 //    cout << "Estou dentro de PheromoneConcentration:  " << Pheromone(1,1) <<endl;
-    return Pheromone(iofXpos,jofYpos);
+    return SensitivityFunction(Pheromone(iofXpos,jofYpos));
 }
 //////////////////////////////////////////////////////////////////////
 //                  END Ant::PheromoneConcentration
@@ -355,7 +451,17 @@ double Ant::ForceY(){
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-void Ant::UpdatePhero(){
+void Ant::UpdatePhero(Matrix& mat){
+    //  'mat' is the current ant's deposited pheromone.
+    //  Adds the various AntDepositedPhero and then diffuses
+    //  the pheromone.
+    for (int i=1; i<=numxx; i++) {
+        for (int j=1; j<=numyy; j++) {
+            Pheromone(i,j) += 0.01*mat(i,j);
+        }
+    }
+    
+}
 //    ______      _                     _ _      _ _
 //    | ___ \    | |                   | (_)    (_) |
 //    | |_/ /   _| |_    _____  ___ __ | |_  ___ _| |_
@@ -372,7 +478,10 @@ void Ant::UpdatePhero(){
 //   |_| \___/|_|  |_| |_| |_|\__,_|_|\__,_|
     //
     //  With AntPosX etc. From heat equation.
-    }
+    // Actually, this function should just add the newly deposited
+    //  pheromone to AntDepositedPhero !
+    //  Diffusion of the pheromone should be in another function which
+    //  first adds the various AntDepositedPhero and then diffuses?
 /********************************************************************/
 //					END Class Ant Functions
 /********************************************************************/

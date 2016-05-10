@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iomanip>  
 #include <random>
+#include <chrono>
 
 using namespace std;
 
@@ -21,24 +22,33 @@ using namespace std;
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 
-static double const numxx = 10.;
-static double const numyy = 10.;
+static double const numxx = 100.;
+static double const numyy = 100.;
 
 //static double const Pi = 3.14159;
 static double const Pi =  3.1415926535;
 static double const Ln2 = 0.6931471806;
 
-default_random_engine generator;
-normal_distribution<double> Normal(0.,1.);      //Normal(0.,1.)
+// obtain a seed from the system clock:
+unsigned seed1 = std::chrono::system_clock::now().time_since_epoch().count();
+
+
+default_random_engine generator(seed1);
+normal_distribution<double> Normal(0.,1.);      // Normal(0.,1.)
+normal_distribution<double> SmallNormal(0.,.05);      // (0.,.05)
+uniform_real_distribution<double> Uniform(0.,2.*Pi);      // Uniformly distributed angle
 //http://www.cplusplus.com/reference/random/normal_distribution/
 // Normal(mean,stddev)
 // Usage:
 // double number = Normal(generator);
-static double const Turn_off_random = 1.*0.1;    //*0.02;
+static double const Turn_off_random = 1.*1.;    //*0.02;
 //  ^^^ 0. = No Random!
 
 //	Parameter for Regularizing Function
 static double const RegularizingEpsilon = 0.01;
+
+//  This is pheromone detection threshold, but not exactly. It's complicated.
+static double const Threshold = 0.05; //   Explained in the Readme...   0.1
 
 
 //////////////////////////////////////////////////////
@@ -93,6 +103,8 @@ static double const Lambda = 1.;         //10./SENSING_AREA_RADIUS;????
 //static double const TFINAL = 0.1;
 static double const delta_t = 0.05;   //     0.005
 
+
+string SensitivityMethod;
 
 ////////////////////////////
 //  Definição do  Domínio
@@ -156,7 +168,7 @@ int ChangedSide = 0;
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
-//_______  __    __  .__   __.   ______ .___________. __    ______   .__   __.      _______.
+// _______  __    __  .__   __.   ______ .___________. __    ______   .__   __.      _______.
 //|   ____||  |  |  | |  \ |  |  /      ||           ||  |  /  __  \  |  \ |  |     /       |
 //|  |__   |  |  |  | |   \|  | |  ,----'`---|  |----`|  | |  |  |  | |   \|  |    |   (----`
 //|   __|  |  |  |  | |  . `  | |  |         |  |     |  | |  |  |  | |  . `  |     \   \
@@ -224,6 +236,28 @@ double RegularizingFunction(double X)
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//      Sensitivity Function
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+double SensitivityFunction(double c){
+    
+    double aux;
+    
+    //    aux = c;  SensitivityMethod = "Identity";
+    aux = sqrt(c*c + Threshold*Threshold);  SensitivityMethod = "Sqrt(c^2 + c_*^2)";
+    //   aux = max(Threshold,c);     SensitivityMethod = "max(c, c_*)";
+    
+    return aux;
+}
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//      End Sensitivity Function
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -280,6 +314,13 @@ int main (void){
     Pop[1].Walk();
     cout << "LALALA 3:  " << Ant::Pheromone(1,1) <<endl;
     
+    
+    
+    ofstream AntPos("AntPos.txt");
+    AntPos << "###  Units are X_hat = " << X_hat_in_cm << "cm." << endl;
+    AntPos << Pop[0].AntPosX << "\t" << Pop[0].AntPosY << endl;
+
+    
     //////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
     //      MAIN LOOP
@@ -289,14 +330,37 @@ int main (void){
     for (int iter=0; iter <= numiter; iter++) {
         
         for (int antnumber=0; antnumber < totalantnumber; antnumber++) {
+            
             Pop[antnumber].Walk();
             
             cout << "The ForceX:   " << Pop[antnumber].ForceX() << endl;
             cout << "The ForceY:   " << Pop[antnumber].ForceY() << endl;
+            cout << "Deposited Phero:   " << Pop[antnumber].AntDepositedPhero(3,3) << endl;
         }
-        
-    }
+        for (int antnumber=0; antnumber < totalantnumber; antnumber++) {
+            
+            Ant::UpdatePhero(Pop[antnumber].AntDepositedPhero);
+            
+        }
+     
+//        Ant::Pheromone.Print();
+        AntPos << Pop[0].AntPosX << "\t" << Pop[0].AntPosY << endl;
+    }// End of time cycle
     
+    cout << "Universal Phero:   " << Ant::Pheromone(2,2) << endl;
+    
+    ofstream Phero;
+    Phero.open("Phero.txt");
+    for(int j=1;j<=numxx;j++){
+        for(int k=1;k<=numyy;k++){
+            Phero << x_1 + j*delta_x << "\t"<< y_1 + k*delta_y << "\t" << Ant::Pheromone(j,k) << endl;
+            if(k==numyy)
+                Phero << endl;
+        }
+    }
+    Phero.close();
+
+
     
     
     return 0;

@@ -4,10 +4,28 @@ New Repository
 https://github.com/todisorder/Ants04.git
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+>> 10 de maio 2016:
+> Muita coisa! Está quase pronto para fazer o mesmo que aqueles da Argentine Ant:
+	Ou seja, feromona exploratória.
+> Para isso, falta fazer a difusão no UpdatePhero.
+> Continua a faltar um cálculo decente do gradiente… :(
+
+
+>> 3 de maio 2016: 
+Mudanças feitas em Ants02 que incorporei neste:
+> Uma espécie de Sensitivity.
+> No fundo é substituir c(t,X) por max(eps, c(t,X))! 
+> Assim, andam mesmo sem feromona; é como se a indeterminação 0/0 que dá quando 
+	não há feromona ficasse igual a Lambda em vez de zero.
+> Ou então substituir c por \sqrt{c^2 + eps^2}, é do mesmo tipo.
+> eps é o Threshold.
+> Também quero que o random seja diferente. Vai ser um acréscimo pequeno a F, aleatório numa pequena bola; ou seja, um theta uniforme em (0,2pi)e um r (ou um 1-r) normal em (0,r_0).
+> E o random é mesmo random, com seed da hora atual.
+
+
 25 de Abril 2016:
 
 >> Mudei as matrizes. AGORA USO Matrix.cpp !!!!
-
 
 25 de Abril 2016:
 >> O objetivo é fazer **simulação completa**

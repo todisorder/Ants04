@@ -1,6 +1,6 @@
 reset
 set parametric
-set term png font "arial,12"  size 240, 840
+set term png font "arial,12"  size 840, 840
 #unset xtics
 #unset ytics
 set title ''
