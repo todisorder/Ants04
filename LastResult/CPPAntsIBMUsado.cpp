@@ -22,8 +22,8 @@ using namespace std;
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 
-static double const numxx = 100.;
-static double const numyy = 100.;
+static double const numxx = 200.;
+static double const numyy = 200.;
 
 //static double const Pi = 3.14159;
 static double const Pi =  3.1415926535;
@@ -120,16 +120,16 @@ string SensitivityMethod;
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 // extremo inferior do intervalo em x (cm)
-static double const x_1_cm = -25.;
+static double const x_1_cm = -5.;      //-25
 
 // extremo superior do intervalo em x (cm)
-static double const x_2_cm = 25.;
+static double const x_2_cm = 5.;       //25
 
 // extremo inferior do intervalo em y (cm)
-static double const y_1_cm =  -50.;
+static double const y_1_cm =  -5.;     //-50
 
 // extremo superior do intervalo em y (cm)
-static double const y_2_cm = 50.;
+static double const y_2_cm = 5.;       //50
 
 // extremo inferior do intervalo em x
 static double const x_1 = x_1_cm / X_hat_in_cm;
@@ -257,6 +257,48 @@ double SensitivityFunction(double c){
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//      Save time step
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//
+//void SaveAnt(Matrix u1, int icurrent, string ref)
+//{
+//    double Tcurrent = icurrent * dt;
+//    
+//    stringstream sstream_buffer;
+//    string string_buffer;
+//    
+//    // create the filename (using string/stringstream for manipulation of the data that will form the name);
+//    sstream_buffer.clear();
+//    //	sstream_buffer << "./" << method_name << "/U_" << fixed << setprecision(6) << t_n  << "___" << n;
+//    //  	sstream_buffer << ref << "T-" << fixed << setprecision(2) << icurrent  << ".txt";
+//    sstream_buffer << ref << "T-" << setfill('0')  << setw(6) << icurrent  << ".txt";
+//    string_buffer.clear();
+//    sstream_buffer >> string_buffer;
+//    
+//    // create the output stream
+//    ofstream of_U_n(string_buffer.c_str());
+//    
+//    write all the key->values present the U_n
+//    for(int j=0;j<xx;j++){
+//        for(int k=0;k<yy;k++){
+//            of_U_n << u1(j,k) << "\t";
+//            if(k==yy-1)
+//                of_U_n << endl;
+//        }
+//    }
+//}
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//      End Save time step
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+
+
+
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -294,26 +336,27 @@ int main (void){
     Numerics data;
     int numiter = data.numiter;
     
-    Ant::Pheromone.Print();
-    Ant formiga3;
-    cout << "LALALA:  " << Ant::Pheromone(1,1) <<endl;
-    formiga3.Walk();
-    cout << "LALALA 2:  " << Ant::Pheromone(1,1) <<endl;
-    cout << "LALALA 4:" << formiga3.PheromoneConcentration() << endl;
+//    Ant::Pheromone.Print();
+//    Ant formiga3;
+//    cout << "LALALA:  " << Ant::Pheromone(1,1) <<endl;
+//    formiga3.Walk();
+//    cout << "LALALA 2:  " << Ant::Pheromone(1,1) <<endl;
+//    cout << "LALALA 4:" << formiga3.PheromoneConcentration() << endl;
     
     //////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
 
-    int NN = 3;
+    int NN = 10;
     int totalantnumber = NN;
     
     Ant * Pop;
     Pop = new Ant[NN];
-//    cout << "Agora:  " << Pop[1].AntDepositedPhero(1,1) <<endl;
-    cout << "Agora:  " << Pop[1].AntPosY <<endl;
-    Pop[1].Walk();
-    cout << "LALALA 3:  " << Ant::Pheromone(1,1) <<endl;
-    
+
+    for (int antnumber=0; antnumber < totalantnumber; antnumber++) {
+        Pop[antnumber].AntFilename = "AntPos-"+to_string(antnumber+1)+".txt";
+        Pop[antnumber].AntFile.open(Pop[antnumber].AntFilename);
+        cout << Pop[antnumber].AntFilename << endl;
+    }
     
     
     ofstream AntPos("AntPos.txt");
@@ -333,13 +376,15 @@ int main (void){
             
             Pop[antnumber].Walk();
             
-            cout << "The ForceX:   " << Pop[antnumber].ForceX() << endl;
-            cout << "The ForceY:   " << Pop[antnumber].ForceY() << endl;
-            cout << "Deposited Phero:   " << Pop[antnumber].AntDepositedPhero(3,3) << endl;
+//            cout << "The ForceX:   " << Pop[antnumber].ForceX() << endl;
+//            cout << "The ForceY:   " << Pop[antnumber].ForceY() << endl;
+//            cout << "Deposited Phero:   " << Pop[antnumber].AntDepositedPhero(3,3) << endl;
         }
         for (int antnumber=0; antnumber < totalantnumber; antnumber++) {
             
             Ant::UpdatePhero(Pop[antnumber].AntDepositedPhero);
+            
+            Pop[antnumber].AntFile << Pop[antnumber].AntPosX << "\t" << Pop[antnumber].AntPosY << endl;
             
         }
      

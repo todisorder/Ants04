@@ -117,8 +117,11 @@ public:
     double AntHomeDirY;
     bool IsReturning;
     Matrix AntDepositedPhero;
+    string AntFilename;
+    ofstream AntFile;
     
     void Walk();
+
     static void UpdatePhero(Matrix& mat);
 //    double IndexXOf(double position);    // Compute matrix index i associated to position.
 //    double IndexYOf(double position);    // Compute matrix index j associated to position.
@@ -135,7 +138,6 @@ public:
         AntVelX = 0.1;
         AntVelY = 0.1;
         IsReturning = false;
-
     }
     Ant (const double posX, const double posY) : AntDepositedPhero(numxx, numyy){
         AntPosX = posX;
@@ -178,7 +180,12 @@ void Ant::Walk(){
     double ii = IndexXOf(AntPosX);
     double jj = IndexYOf(AntPosY);
     //  Reset deposited pheromone
-    AntDepositedPhero = 0.*AntDepositedPhero;
+//    AntDepositedPhero = 0.*AntDepositedPhero;     // This causes memory leak!!!
+    for (int i=1; i<=numxx; i++) {
+        for (int j=1; j<=numyy; j++) {
+            AntDepositedPhero(i,j) = 0.;
+        }
+    }
     double AntXposNew;
     double AntYposNew;
     double AntVelXNew;
@@ -264,16 +271,9 @@ void Ant::Walk(){
     AntVelX = AntVelXNew;
     AntVelY = AntVelYNew;
     
-    AntDepositedPhero(ii,jj) = 0.1;
+    AntDepositedPhero(ii,jj) = 0.01;     //  TEMP!!!!!!
 
     
-//    AntDepositedPhero(3,3) = 5.89;  //OK, can change
-//    AntPosX = AntPosX + 200.;
-//    Pheromone(1,1) += 39.;
-//    Pheromone(2,2) = PheromoneConcentration();  //OK, can use
-//    Pheromone(2,2) = ForceX();  //OK, can use
-//    
-
 
 
 }
@@ -299,6 +299,7 @@ double Ant::PheromoneConcentration(){
 //    cout << "AAAHH:   " << iofXpos << ",,,,"<< jofYpos << endl;
 //    cout << "Estou dentro de PheromoneConcentration:  " << Pheromone(1,1) <<endl;
     return SensitivityFunction(Pheromone(iofXpos,jofYpos));
+//    return Pheromone(iofXpos,jofYpos);
 }
 //////////////////////////////////////////////////////////////////////
 //                  END Ant::PheromoneConcentration
@@ -457,31 +458,15 @@ void Ant::UpdatePhero(Matrix& mat){
     //  the pheromone.
     for (int i=1; i<=numxx; i++) {
         for (int j=1; j<=numyy; j++) {
-            Pheromone(i,j) += 0.02*mat(i,j);
+            Pheromone(i,j) += 1.*0.01*mat(i,j);
         }
     }
     
 }
-//    ______      _                     _ _      _ _
-//    | ___ \    | |                   | (_)    (_) |
-//    | |_/ /   _| |_    _____  ___ __ | |_  ___ _| |_
-//    |  __/ | | | __|  / _ \ \/ / '_ \| | |/ __| | __|
-//    | |  | |_| | |_  |  __/>  <| |_) | | | (__| | |_
-//    \_|   \__,_|\__|  \___/_/\_\ .__/|_|_|\___|_|\__|
-//                               | |
-//                               |_|
-//     __                           _
-//    / _|                         | |
-//   | |_ ___  _ __ _ __ ___  _   _| | __ _
-//   |  _/ _ \| '__| '_ ` _ \| | | | |/ _` |
-//   | || (_) | |  | | | | | | |_| | | (_| |
-//   |_| \___/|_|  |_| |_| |_|\__,_|_|\__,_|
-    //
-    //  With AntPosX etc. From heat equation.
-    // Actually, this function should just add the newly deposited
-    //  pheromone to AntDepositedPhero !
-    //  Diffusion of the pheromone should be in another function which
-    //  first adds the various AntDepositedPhero and then diffuses?
+
+
+
+
 /********************************************************************/
 //					END Class Ant Functions
 /********************************************************************/
