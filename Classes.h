@@ -458,7 +458,7 @@ void Ant::UpdatePhero(Matrix& mat){
     //  the pheromone.
     for (int i=1; i<=numxx; i++) {
         for (int j=1; j<=numyy; j++) {
-            Pheromone(i,j) += 1.*0.01*mat(i,j);
+            Pheromone(i,j) = (1. - delta_t*0.001)*Pheromone(i,j) + 1.*0.1*mat(i,j);
         }
     }
     
